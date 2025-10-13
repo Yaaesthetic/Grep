@@ -1,0 +1,20 @@
+- name: Configure AWS credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: eu-west-3
+
+- name: Build Docker image
+  run: |
+    docker build -t grep:latest ./backend
+    docker tag grep:latest ${{ steps.ecr.outputs.registry }}/grep:latest
+
+- name: Push to Amazon ECR
+  run: |
+    docker push ${{ steps.ecr.outputs.registry }}/grep:latest
+
+- name: Update Kubernetes deployment
+  run: |
+    aws eks update-kubeconfig --region eu-west-3 --name grep-eks-cluster
+    kubectl set image deployment/grep-backend grep=${{ steps.ecr.outputs.registry }}/grep:latest -n grep
