@@ -236,3 +236,11 @@ jobs:
 **Yaaesthetic**
 Software & DevOps Engineer
 ---
+
+### How to Deploy
+1. Configure AWS credentials in GitHub Secrets:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+   - `AWS_REGION`
+   - `ECR_REPO`
+2. Push code to `main` branch → automatic build & deploy to ECS
